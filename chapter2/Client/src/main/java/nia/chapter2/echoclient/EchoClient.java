@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 
 import java.net.InetSocketAddress;
 
@@ -36,6 +37,7 @@ public class EchoClient {
                     @Override
                     public void initChannel(SocketChannel ch)
                         throws Exception {
+                        ch.pipeline().addLast(new LineBasedFrameDecoder(1024));
                         ch.pipeline().addLast(
                              new EchoClientHandler());
                     }
@@ -58,6 +60,7 @@ public class EchoClient {
 
 //        final String host = args[0];
 //        final int port = Integer.parseInt(args[1]);
+        System.out.println("a" + System.getProperty("line.separator") + "b");
         new EchoClient("0.0.0.0", 6999).start();
     }
 }

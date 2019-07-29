@@ -15,16 +15,27 @@ import io.netty.util.CharsetUtil;
 @Sharable
 public class EchoClientHandler
     extends SimpleChannelInboundHandler<ByteBuf> {
+
+    private int receiveCnt = 0;
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty rocks!",
-                CharsetUtil.UTF_8));
+        for (int i = 0; i < 100; i++) {
+            ctx.write(Unpooled.copiedBuffer("Netty rocks!" + System.getProperty("line.separator"),
+                    CharsetUtil.UTF_8));
+        }
+        ctx.flush();
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) {
         System.out.println(
-                "Client received: " + in.toString(CharsetUtil.UTF_8));
+                "Client received:" + receiveCnt++ + in.toString(CharsetUtil.UTF_8));
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channelInactive");
     }
 
     @Override

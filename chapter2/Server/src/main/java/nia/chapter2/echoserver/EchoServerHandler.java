@@ -15,18 +15,24 @@ import io.netty.util.CharsetUtil;
  */
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
+    private volatile int receiveCnt = 0;
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ByteBuf in = (ByteBuf) msg;
+        String instr = in.toString(CharsetUtil.UTF_8);
         System.out.println(
-                "Server received: " + in.toString(CharsetUtil.UTF_8));
-        ctx.write(in);
+                "Server received" + receiveCnt++ + ": " + instr);
+        ctx.write(Unpooled.wrappedBuffer((instr + System.getProperty("line.separator")).getBytes()));
     }
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx)
             throws Exception {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+        System.out.println("Server channelReadComplete");
+//        ctx.flush();
+        ctx.writeAndFlush(Unpooled.wrappedBuffer(("finish" + System.getProperty("line.separator")).getBytes()))
                 .addListener(ChannelFutureListener.CLOSE);
     }
 
