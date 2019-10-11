@@ -21,7 +21,17 @@ public class EchoClientHandler
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         for (int i = 0; i < 100; i++) {
-            ctx.write(Unpooled.copiedBuffer("Netty rocks!" + System.getProperty("line.separator"),
+            ctx.write(Unpooled.copiedBuffer("1 Netty rocks!" + System.getProperty("line.separator"),
+                    CharsetUtil.UTF_8));
+        }
+        ctx.flush();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < 10; i++) {
+            ctx.write(Unpooled.copiedBuffer("2 Netty rocks!" + System.getProperty("line.separator"),
                     CharsetUtil.UTF_8));
         }
         ctx.flush();
@@ -30,7 +40,7 @@ public class EchoClientHandler
     @Override
     public void channelRead0(ChannelHandlerContext ctx, ByteBuf in) {
         System.out.println(
-                "Client received:" + receiveCnt++ + in.toString(CharsetUtil.UTF_8));
+                "Client received:" + receiveCnt++ + " " + in.toString(CharsetUtil.UTF_8));
     }
 
     @Override
